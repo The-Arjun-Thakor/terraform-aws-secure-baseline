@@ -1,0 +1,48 @@
+name: terraform-ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Least privilege: this pipeline only needs to read the repository.
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: fmt + validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.8"
+
+      - name: Check formatting
+        run: terraform fmt -check -recursive -diff
+
+      - name: Initialise (no backend, no credentials needed)
+        run: terraform init -backend=false -input=false
+
+      - name: Validate
+        run: terraform validate
+
+  security-scan:
+    name: Checkov (IaC security scan)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Checkov (pinned version)
+        run: pip install --no-cache-dir "checkov==3.3.27"
+
+      # Fails the build on any finding that is not explicitly skipped with a
+      # justification in the code. See docs/SECURITY_DECISIONS.md.
+      - name: Scan
+        run: checkov --config-file .checkov.yaml

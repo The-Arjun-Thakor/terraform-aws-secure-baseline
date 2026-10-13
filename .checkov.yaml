@@ -1,0 +1,11 @@
+# Checkov configuration. Run:  checkov --config-file .checkov.yaml
+framework:
+  - terraform
+directory:
+  - .
+quiet: true
+compact: true
+download-external-modules: false
+# No global skips. Every accepted risk is documented inline with a
+# "checkov:skip=<ID>:<justification>" comment next to the resource it applies to,
+# and explained in docs/SECURITY_DECISIONS.md.

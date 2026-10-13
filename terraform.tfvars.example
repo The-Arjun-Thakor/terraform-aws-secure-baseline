@@ -1,0 +1,13 @@
+# Copy to terraform.tfvars and adjust. terraform.tfvars is git-ignored.
+region      = "eu-central-1"
+project     = "secure-baseline"
+
+# If you change the region, change the availability zones to match.
+availability_zones = ["eu-central-1a", "eu-central-1b"]
+environment = "dev"
+
+# Optional: receive alarm e-mails (you must confirm the subscription e-mail).
+alarm_email = ""
+
+# Set to false to avoid GuardDuty charges after the 30-day trial.
+enable_guardduty = true
